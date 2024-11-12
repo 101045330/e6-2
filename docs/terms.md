@@ -34,4 +34,3 @@ For questions about these Terms, please contact us at [Contact@acme.com].
 | ----   | -----------------  | 
 | MIN G. | mg@acmecompany.com |
 
-
