@@ -6,7 +6,7 @@ Welcome to [Website Name]. By using our website, you agree to the following Term
 
 ## 1. Acceptance of Terms
 
-By accessing and using [Website Name], you agree to comply with these Terms. If you disagree with any part, you may not use our site.
+By accessing and using [ACME Company] (https://acmecompany.com), you agree to comply with these Terms. If you disagree with any part, you may not use our site.
 
 ## 2. Use of Website
 
@@ -26,4 +26,12 @@ We may update these Terms at any time. Continued use of the site following chang
 
 ## 6. Contact Us
 
-For questions about these Terms, please contact us at [Contact Email].
+For questions about these Terms, please contact us at [Contact@acme.com].
+
+## 7. Ding Dong 
+
+| Name   | Email              | 
+| ----   | -----------------  | 
+| MIN G. | mg@acmecompany.com |
+
+
