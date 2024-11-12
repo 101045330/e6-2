@@ -1,68 +1,72 @@
-name: Release Workflow
+# .github/workflows/convert-to-pdf.yml
 
+name: Docs to PDF
+# This workflow is triggered on pushes to the repository.
 on:
   push:
     branches:
       - main
 
 jobs:
-  # Job for building and uploading docs artifact (assumed already exists)
-  build_docs:
+  converttopdf:
+    name: Build PDF
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      # Build docs or any other tasks related to generating docs
-      - name: Generate Docs
-        run: |
-          mkdir -p docs
-          echo "Some generated documentation" > docs/index.md
-
-      # Upload the docs artifact
-      - name: Upload Docs Artifact
-        uses: actions/upload-artifact@v3
+      - uses: actions/checkout@v3
+      - uses: baileyjm02/markdown-to-pdf@v1
+        with:
+          input_dir: docs
+          output_dir: pdfs
+          images_dir: docs/images
+          # for example <img src="./images/file-name.png">
+          image_import: ./images
+          # Default is true, can set to false to only get PDF files
+          build_html: false
+      - uses: actions/upload-artifact@v3
         with:
           name: docs
-          path: docs/
+          path: pdfs
 
-  # Job for creating release and uploading artifact
-  create_release:
+  release:
+    name: Create Release and Upload Artifact
     runs-on: ubuntu-latest
-    needs: build_docs  # This job depends on the 'build_docs' job
+    needs: converttopdf
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Generate Random Tag
-        id: generate_tag
-        run: |
-          # Generate a random tag name (e.g., release-YYYYMMDD-HHMMSS)
-          TAG_NAME="release-$(date +%Y%m%d-%H%M%S)"
-          echo "Generated Tag: $TAG_NAME"
-          echo "::set-output name=tag::$TAG_NAME"
-
-      - name: Create GitHub Release
-        id: create_release
-        run: |
-          # Create the release with the randomly generated tag
-          gh release create ${{ steps.generate_tag.outputs.tag }} --title "Release ${{ steps.generate_tag.outputs.tag }}" --notes "Release created on $(date)"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Download Docs Artifact
+      - name: Download "docs" artifact from previous job
         uses: actions/download-artifact@v3
         with:
           name: docs
+          path: ./downloaded_docs
 
-      - name: List Files in Docs Directory
+      - name: List downloaded files
         run: |
-          echo "Listing files in the docs directory:"
-          ls -R docs/
+          echo "Listing downloaded files:"
+          find ./downloaded_docs -type f
 
-      - name: Upload Docs Artifact to Release
+      - name: Generate random tag name
+        id: generate_tag
         run: |
-          # Upload the artifact to the newly created release
-          gh release upload ${{ steps.generate_tag.outputs.tag }} docs/*
+          TAG_NAME="release-$(uuidgen)"
+          echo "Generated tag: $TAG_NAME"
+          echo "tag_name=$TAG_NAME" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.tag_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload PDF to GitHub Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./downloaded_docs/terms.pdf
+          asset_name: terms.pdf
+          asset_content_type: application/pdf
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
