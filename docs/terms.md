@@ -28,9 +28,9 @@ We may update these Terms at any time. Continued use of the site following chang
 
 For questions about these Terms, please contact us at [Contact@acme.com].
 
-## 7. Ding Dong 
+## 7. Moderators 
 
-| Name   | Email              | 
-| ----   | -----------------  | 
-| MIN G. | mg@acmecompany.com |
-
+| Name      | Email               | 
+| --------- | ------------------- | 
+| MIN G.    | mg@acmecompany.com  |
+| PAMILA S. | pam@acmecompany.com |
